@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Ocean View Resort | Register</title>
+  <link rel="stylesheet" href="assets/styles.css"/>
+</head>
+<body>
+  <div class="center">
+    <div class="auth-box card">
+      <h1>Create Staff Account</h1>
+      <p class="small">Password rule: 8+ chars, uppercase, lowercase, number</p>
+
+      <div id="msg"></div>
+
+      <label>Full Name</label>
+      <input id="full_name" type="text" placeholder="Receptionist name"/>
+
+      <label>Email</label>
+      <input id="email" type="email" placeholder="name@example.com"/>
+
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Strong password"/>
+
+      <label>Confirm Password</label>
+      <input id="password2" type="password" placeholder="Repeat password"/>
+
+      <div style="margin-top:14px" class="top-actions">
+        <button class="btn" id="registerBtn">Register</button>
+        <a class="btn secondary" href="index.html">Back to login</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { apiFetch, setSession } from "./assets/auth.js";
+    const msg = document.getElementById("msg");
+    const show = (t, type="error") => msg.innerHTML = `<div class="alert ${type}">${t}</div>`;
+
+    document.getElementById("registerBtn").addEventListener("click", async ()=>{
+      const full_name = document.getElementById("full_name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const password2 = document.getElementById("password2").value;
+
+      if(!full_name || !email || !password || !password2) return show("All fields are required.");
+      if(password !== password2) return show("Passwords do not match.");
+
+      try{
+        const data = await apiFetch("/auth/register", {
+          method:"POST",
+          body: JSON.stringify({ full_name, email, password })
+        });
+        setSession(data.token, data.user);
+        window.location.href = "dashboard.html";
+      }catch(e){
+        show(e.message);
+      }
+    });
+  </script>
+</body>
+</html>

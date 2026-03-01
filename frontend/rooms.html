@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Room Details</title>
+  <link rel="stylesheet" href="assets/styles.css"/>
+</head>
+<body>
+  <div class="navbar">
+    <div class="inner">
+      <div class="brand">Ocean View Resort </div>
+      <div class="navlinks">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="about.html">About</a>
+        <a href="reservations.html">View Reservations</a>
+        <a href="add-reservation.html">Add Reservation</a>
+        <a href="rooms.html">Room Details</a>
+        <a href="help.html">Help</a>
+        <a href="contact.html">Contact</a>
+        <a href="#" id="logoutLink">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2>Room Types</h2>
+      <p class="small">
+        Rates are used for billing (nights × rate). Prices shown in <b>LKR</b> and estimated <b>USD</b>.
+      </p>
+
+      <div id="msg"></div>
+
+      <div class="rooms-grid" id="roomsGrid"></div>
+
+      <hr/>
+
+      <div class="table-wrap">
+        <table class="table" id="table">
+          <thead>
+            <tr>
+              <th>Room Type</th>
+              <th>Description</th>
+              <th>Rate / Night (LKR)</th>
+              <th>Rate / Night (USD)</th>
+              <th>Total Rooms</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+   
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <b>Ocean View Resort</b>
+        <div class="small">Help & Support Center</div>
+        <div class="small">Smooth operations • Secure access • Guest satisfaction</div>
+      </div>
+
+      <div class="social">
+        <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+
+      <div class="small">
+        © <span id="year"></span> Ocean View Resort • All Rights Reserved
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { mountNavbar } from "./assets/app.js";
+    import { loadRooms } from "./assets/rooms.js";
+    mountNavbar();
+
+    const USD_RATE = 387; 
+
+    const grid = document.getElementById("roomsGrid");
+    const tbody = document.querySelector("#table tbody");
+    const msg = document.getElementById("msg");
+
+    const show = (t, type="error") =>
+      msg.innerHTML = `<div class="alert ${type}">${t}</div>`;
+
+    function imageForRoom(roomType){
+      const key = (roomType || "").toLowerCase();
+      if(key.includes("standard")){
+        return "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=60";
+      }
+      if(key.includes("deluxe")){
+        return "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=60";
+      }
+      if(key.includes("suite")){
+        return "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/10/ca/e7/2c/ocean-view-from-presidential.jpg?w=700&h=-1&s=1";
+      }
+      // default
+      return "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1600&q=60";
+    }
+
+    function fmtLKR(n){
+      return `LKR ${Number(n).toFixed(2)}`;
+    }
+
+    function fmtUSDfromLKR(lkr){
+      const usd = Number(lkr) / USD_RATE;
+      return `USD ${usd.toFixed(2)}`;
+    }
+
+    function roomCard(r){
+      return `
+        <div class="room-card">
+          <img class="room-img" src="${imageForRoom(r.room_type)}" alt="${r.room_type}">
+          <div class="room-body">
+            <div class="room-top">
+              <h3 class="room-name">${r.room_type}</h3>
+              <div class="room-badges">
+                <span class="pill">${r.total_rooms} Rooms</span>
+                <span class="pill">Per Night</span>
+              </div>
+            </div>
+
+            <div class="price">
+              <div class="lkr">${fmtLKR(r.rate_per_night)}</div>
+              <div class="usd">${fmtUSDfromLKR(r.rate_per_night)} (estimated)</div>
+            </div>
+
+            <div class="room-desc">${r.description}</div>
+
+            <div class="room-actions">
+              <a class="btn" href="add-reservation.html">Reserve Now</a>
+              <a class="btn secondary" href="reservations.html">View Reservations</a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    loadRooms().then(rooms=>{
+      msg.innerHTML = "";
+
+      // Cards
+      grid.innerHTML = rooms.map(roomCard).join("");
+
+      // Table
+      tbody.innerHTML = rooms.map(r=>`
+        <tr>
+          <td>${r.room_type}</td>
+          <td>${r.description}</td>
+          <td>${fmtLKR(r.rate_per_night)}</td>
+          <td>${fmtUSDfromLKR(r.rate_per_night)}</td>
+          <td>${r.total_rooms}</td>
+        </tr>
+      `).join("");
+
+    }).catch(e=>show(e.message));
+  </script>
+</body>
+</html>
