@@ -24,46 +24,7 @@ body{
 
 a{ color:inherit; }
 
-/* ===== Login Background ===== */
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
 
-  /* Ocean Background */
-  background: 
-    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
-    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80");
-
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: #fff;
-}
-
-/* Center Layout */
-.center {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ===== Glass Effect Card ===== */
-.auth-box {
-  width: min(420px, 90%);
-}
-
-/* Glassmorphism Effect */
-.auth-box.card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-
-  border-radius: 20px;
-  padding: 35px;
-  border: 1px solid rgba(255,255,255,0.25);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
-}
 
 /* Heading Style */
 .auth-box h1 {
