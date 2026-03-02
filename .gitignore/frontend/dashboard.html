@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dashboard | Ocean View Resort</title>
+  <link rel="stylesheet" href="assets/styles.css"/>
+</head>
+<body>
+  <div class="navbar">
+    <div class="inner">
+      <div class="brand">Ocean View Resort </div>
+      <div class="navlinks">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="about.html">About</a>
+        <a href="reservations.html">View Reservations</a>
+        <a href="add-reservation.html">Add Reservation</a>
+        <a href="rooms.html">Room Details</a>
+        <a href="help.html">Help</a>
+        <a href="contact.html">Contact</a>
+        <a href="#" id="logoutLink">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-inner">
+        <div class="hero-left">
+            <div class="hero-title"> Welcome to Ocean View Dashboard
+              <t>Delivering seamless guest experiences with precision, comfort, and care.</t>
+            </div>
+        </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="row">
+      <div class="col card">
+        <h2>Quick Actions</h2>
+        <p>Create and manage reservations with secure access.</p>
+        <div class="row">
+          <a class="btn" href="add-reservation.html">Add Reservation</a>
+          <a class="btn secondary" href="reservations.html">Search Reservations</a>
+        </div>
+      </div>
+
+      <div class="col card">
+        <h2>Overview</h2>
+        <div class="kpi" id="kpi"></div>
+        <div class="small" id="kpiMsg">Loading...</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="top-actions">
+        <h2>Recent Reservations</h2>
+        <a class="btn secondary" href="reservations.html">View All</a>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table" id="recentTable">
+          <thead>
+            <tr>
+              <th>Reservation #</th>
+              <th>Guest</th>
+              <th>Room</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <b>Ocean View Resort</b>
+        <div class="small">Help & Support Center</div>
+        <div class="small">Smooth operations • Secure access • Guest satisfaction</div>
+      </div>
+
+      <div class="social">
+        <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+
+      <div class="small">
+        © <span id="year"></span> Ocean View Resort • All Rights Reserved
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { mountNavbar } from "./assets/app.js";
+    import { apiFetch } from "./assets/auth.js";
+    mountNavbar();
+
+    const kpi = document.getElementById("kpi");
+    const kpiMsg = document.getElementById("kpiMsg");
+    const tbody = document.querySelector("#recentTable tbody");
+
+    async function load(){
+      const reservations = await apiFetch("/reservations");
+      const rooms = await apiFetch("/rooms");
+
+      kpi.innerHTML = `
+        <div class="item"><div class="small">Reservations</div><div><b>${reservations.length}</b></div></div>
+        <div class="item"><div class="small">Room Types</div><div><b>${rooms.length}</b></div></div>
+      `;
+      kpiMsg.textContent = "System ready.";
+
+      const recent = reservations.slice(0, 8);
+      tbody.innerHTML = recent.map(r => `
+        <tr>
+          <td><a href="reservations.html?open=${encodeURIComponent(r.reservation_number)}">${r.reservation_number}</a></td>
+          <td>${r.guest_name}</td>
+          <td>${r.room_type}</td>
+          <td>${r.check_in}</td>
+          <td>${r.check_out}</td>
+          <td>LKR ${Number(r.total_amount).toFixed(2)}</td>
+        </tr>
+      `).join("");
+    }
+
+    load().catch(e => { kpiMsg.textContent = e.message; });
+  </script>
+</body>
+</html>
