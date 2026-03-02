@@ -18,3 +18,7 @@ Thumbs.db
 
 # Temp
 *.tmp
+# Downloaded/search pages and temp files
+*Search.html
+*Search_files/
+*.download
