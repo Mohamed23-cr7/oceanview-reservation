@@ -35,7 +35,7 @@ reservationsRouter.post("/", requireAuth, async (req, res) => {
   }
 
   try {
-    // room rate + capacity
+    
     const [roomRows] = await pool.query(
       "SELECT rate_per_night, total_rooms FROM rooms WHERE id=?",
       [room_id]
@@ -118,7 +118,7 @@ reservationsRouter.get("/", requireAuth, async (req, res) => {
   }
 });
 
-// ✅ Full detail by reservation number
+
 reservationsRouter.get("/:reservation_number", requireAuth, async (req, res) => {
   const reservation_number = String(req.params.reservation_number || "").trim();
 

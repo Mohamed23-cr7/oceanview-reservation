@@ -5,9 +5,7 @@ import { pool } from "../config/db.js";
 
 export const authRouter = express.Router();
 
-/* =========================
-   REGISTER
-========================= */
+
 authRouter.post("/register", async (req, res) => {
   try {
     const { full_name, email, password } = req.body;
@@ -64,9 +62,7 @@ authRouter.post("/register", async (req, res) => {
   }
 });
 
-/* =========================
-   LOGIN
-========================= */
+
 authRouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
